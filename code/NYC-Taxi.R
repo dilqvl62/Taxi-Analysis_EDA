@@ -34,6 +34,7 @@ taxi<- as_tibble(read.csv('data/Taxi.csv'))
 summary(taxi)
 glimpse(taxi)
 sum(is.na(taxi))
+
 table(taxi$vendor_id)
 table(taxi$store_and_fwd_flag)
 table(taxi$passenger_count)
@@ -43,14 +44,17 @@ s1 = taxi %>%
   filter(trip_duration < 10000)
 qplot(trip_duration, data=s1, bins =30)
 
-
 taxi%>%
   ggplot(aes(trip_duration)) + 
   geom_histogram(fill ="red", bins= 150) +
   scale_x_log10()+
   scale_y_sqrt()
 
-
+taxi <- taxi %>%
+  mutate(pickup_datetime= ymd_hms(pickup_datetime),
+         dropoff_datetime= ymd_hms(dropoff_datetime),
+         vendor_id= factor(vendor_id),
+         passenger_count= factor(passenger_count))
 
 
 
