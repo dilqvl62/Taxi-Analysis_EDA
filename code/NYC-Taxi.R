@@ -37,3 +37,28 @@ sum(is.na(taxi))
 table(taxi$vendor_id)
 table(taxi$store_and_fwd_flag)
 table(taxi$passenger_count)
+qplot(trip_duration, data=s1, bins = 30)
+
+s1 = taxi %>%
+  filter(trip_duration < 10000)
+qplot(trip_duration, data=s1, bins =30)
+
+
+taxi%>%
+  ggplot(aes(trip_duration)) + 
+  geom_histogram(fill ="red", bins= 150) +
+  scale_x_log10()+
+  scale_y_sqrt()
+
+
+
+
+
+
+
+
+
+
+
+
+
