@@ -91,7 +91,13 @@ p1 <- taxi %>%
   geom_histogram(fill = "red", bins =120) + 
   labs(x= "pickup dates")
 
-
+p2 <- taxi %>%
+  ggplot(aes(dropoff_datetime)) + 
+  geom_histogram(fill = "blue", bins = 120) + 
+  labs(x= "dropoff dates")
+layout <- matrix(c(1,2),2,1,byrow = FALSE)
+multiplot(p1,p2, layout=layout)
+p1 <-1; p2<-1
 
 
 
