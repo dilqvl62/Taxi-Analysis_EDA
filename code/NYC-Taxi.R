@@ -12,7 +12,11 @@ library('tidyr')# data wrangling
 library('stringr') #string manipulation
 library('forcats') #factor manipulation
 library('lubridate') #data and time
-library('leaflet') #map 
+library('leaflet') #maps
+library('geosphere')# spatial locations
+library('leaflet.extras')#maps
+library('maps') #maps
+
 muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
   plots <- c(list(...), plotlist)
   numPlots = length(plots)
@@ -29,7 +33,7 @@ muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
     grid.newpage()
     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
     for (i in 1:numPlots) {
-      matchid <- as.data.frame(which(layout == i, arr.ind =TTURE))
+      matchid <- as.data.frame(which(layout == i, arr.ind =TRUE))
       print(plots[[i]], vp = viewport(layout.pos.row = matchid$row,
                                       layout.pos.col = matchid$col))
     }
@@ -96,7 +100,7 @@ p2 <- taxi %>%
   geom_histogram(fill = "blue", bins = 120) + 
   labs(x= "dropoff dates")
 layout <- matrix(c(1,2),2,1,byrow = FALSE)
-multiplot(p1,p2, layout=layout)
+muplot(p1,p2, layout=layout)
 p1 <-1; p2<-1
 
 
