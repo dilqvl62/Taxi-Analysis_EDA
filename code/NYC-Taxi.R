@@ -6,8 +6,13 @@ library('corrplot') # visualization
 library('alluvial')# visualization
 library('dplyr')# data manipulation
 library('readr')#input/ output
-
-getwd()
+library('data.table')# data manipulation
+library('tibble') #data wrangling
+library('tidyr')# data wrangling
+library('stringr') #string manipulation
+library('forcats') #factor manipulation
+library('lubridate') #data and time
+library('leaflet') #map 
 muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
   plots <- c(list(...), plotlist)
   numPlots = length(plots)
@@ -56,6 +61,17 @@ taxi <- taxi %>%
          vendor_id= factor(vendor_id),
          passenger_count= factor(passenger_count))
 
+taxi %>%
+  mutate(check = abs(int_length(interval(dropoff_datetime,pickup_datetime)) + trip_duration) > 0) %>%
+  select(check,pickup_datetime, dropoff_datetime, trip_duration) %>%
+  group_by(check) %>%
+  count()
+
+set.seed(1234)
+foo <- sample_n(taxi , 8e3)
+leaflet(data = foo) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
+  addCircleMarkers(~ pickup_longitude, ~pickup_latitude, radius = 1,
+                   color = "red", fillOpacity = 0.3)
 
 
 
