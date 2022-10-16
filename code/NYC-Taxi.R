@@ -74,8 +74,22 @@ leaflet(data = foo) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
                    color = "red", fillOpacity = 0.3)
 
 
+taxi %>% 
+  ggplot(aes(trip_duration)) +
+  geom_histogram(fill= "red", bins = 150) + 
+  scale_x_log10() + 
+  scale_y_sqrt()
 
 
+taxi %>%
+  arrange(desc(trip_duration)) %>%
+  select(trip_duration, pickup_datetime,dropoff_datetime,everything()) %>%
+  head(10)
+
+p1 <- taxi %>%
+  ggplot(aes(pickup_datetime)) + 
+  geom_histogram(fill = "red", bins =120) + 
+  labs(x= "pickup dates")
 
 
 
