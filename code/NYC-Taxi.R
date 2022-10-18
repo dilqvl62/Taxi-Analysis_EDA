@@ -127,5 +127,24 @@ p3<-taxi %>%
   theme(legned.position ="none")+
   scale_y_log10()
 
+p4<- taxi %>%
+  mutate(wday = wday(pickup_datetime, label =TRUE,week_start = 1)) %>%
+  group_by(wday,vendor_id) %>%
+  count()%>%
+  ggplot(aes(wday,n, colour = vendor_id)) +
+  geom_point(size =4) +
+  labs(x = "Day of the week", y = "Total number of the pickups") + 
+  theme(legend.position = "none")
+
+p5<- taxi %>%
+  mutate(hpick = hour(pickup_datetime)) %>%
+  group_by(hpick, vendor_id) %>%
+  count() %>%
+  ggplot(aes(hpick, n, color = vendor_id)) + 
+  geom_point(size = 4) + 
+  labs(x ="hour of the day", y = "Total number of pickups") +
+  theme(legend.position="none")
+
+
 
 
