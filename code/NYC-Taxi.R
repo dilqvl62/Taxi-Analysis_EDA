@@ -108,6 +108,24 @@ taxi %>%
   ggplot(aes(pickup_datetime)) + 
   geom_histogram(fill ="red", bins =120)
 
+p1<- taxi %>% 
+  group_by(passenger_count) %>%
+  count() %>%
+  ggplot(aes(passenger_count, n, fill = passenger_count)) +
+  geom_col() + 
+  scale_y_sqrt()+
+  theme(legend.postion = "none")
+
+p2<- taxi%>%
+  ggplot(aes(vendor_id, fill= vendor_id)) +
+  geom_bar()+
+  theme(legend.posotion ="none")
+
+p3<-taxi %>%
+  ggplot(aes(store_and_fwd_flag)) +
+  geom_bar()+
+  theme(legned.position ="none")+
+  scale_y_log10()
 
 
 
