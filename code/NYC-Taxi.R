@@ -103,6 +103,11 @@ layout <- matrix(c(1,2),2,1,byrow = FALSE)
 muplot(p1,p2, layout=layout)
 p1 <-1; p2<-1
 
+taxi %>%
+  filter(pickup_datetime > ymd("2016-01-20") & pickup_datetime < ymd("2016-02-10")) %>%
+  ggplot(aes(pickup_datetime)) + 
+  geom_histogram(fill ="red", bins =120)
+
 
 
 
