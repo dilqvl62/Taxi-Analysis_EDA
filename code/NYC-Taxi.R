@@ -143,8 +143,10 @@ p5<- taxi %>%
   ggplot(aes(hpick, n, color = vendor_id)) + 
   geom_point(size = 4) + 
   labs(x ="hour of the day", y = "Total number of pickups") +
-  theme(legend.position="none")
+  theme(legend.position = "none")
 
-
+layout <- matrix(c(1,2,3,4,5,5),3,2,byrow = TRUE)
+muplot(p1,p2,p3,p4,p5, layout=layout)
+p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1; p5 <- 1
 
 
