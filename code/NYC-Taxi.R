@@ -47,7 +47,7 @@ sum(is.na(taxi))
 table(taxi$vendor_id)
 table(taxi$store_and_fwd_flag)
 table(taxi$passenger_count)
-qplot(trip_duration, data=s1, bins = 30)
+qplot(trip_duration, data=taxi, bins = 30)
 
 s1 = taxi %>%
   filter(trip_duration < 10000)
@@ -114,17 +114,17 @@ p1<- taxi %>%
   ggplot(aes(passenger_count, n, fill = passenger_count)) +
   geom_col() + 
   scale_y_sqrt()+
-  theme(legend.postion = "none")
+  theme(legend.position = "none")
 
 p2<- taxi%>%
   ggplot(aes(vendor_id, fill= vendor_id)) +
   geom_bar()+
-  theme(legend.posotion ="none")
+  theme(legend.position = "none")
 
 p3<-taxi %>%
   ggplot(aes(store_and_fwd_flag)) +
   geom_bar()+
-  theme(legned.position ="none")+
+  theme(legend.position = "none")+
   scale_y_log10()
 
 p4<- taxi %>%
@@ -146,7 +146,32 @@ p5<- taxi %>%
   theme(legend.position = "none")
 
 layout <- matrix(c(1,2,3,4,5,5),3,2,byrow = TRUE)
-muplot(p1,p2,p3,p4,p5, layout=layout)
+muplot(p1, p2, p3, p4, p5, layout=layout)
 p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1; p5 <- 1
 
+
+taxi%>%
+  group_by(store_and_fwd_flag)%>%
+  count()
+
+p1<-taxi%>%
+  mutate(hpick =hour(pickup_datetime),
+         Month = factor(month(pickup_datetime, label = TRUE))) %>%
+  group_by(hpick, Month)%>%
+  count()%>%
+  ggplot(aes(hpick, n, color= Month)) +
+  geom_line(size= 1.5) +
+  labs(x = "Hour of the day", y = "count") 
+
+p2<-taxi %>%
+  mutate(hpick= hour(pickup_datetime),
+         wday = factor(wday(pickup_datetime, label = TRUE, week_start = 1))) %>%
+  group_by(hpick, wday) %>%
+  count() %>%
+  ggplot(aes(hpick, n, color=wday)) + 
+  geom_line(size= 1.5) + 
+  labs(x = "Hour of the day", y = "count")
+layout <- matrix(c(1,2), 2,1, byrow= FALSE )
+muplot(p1, p2, layout = layout)
+p1<- 1; p2<- 1
 
