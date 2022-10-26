@@ -175,3 +175,25 @@ layout <- matrix(c(1,2), 2,1, byrow= FALSE )
 muplot(p1, p2, layout = layout)
 p1<- 1; p2<- 1
 
+p1 <- taxi %>%
+  filter(pickup_longitude > -74.05 & pickup_longitude < -73.7) %>%
+  ggplot(aes(pickup_longitude)) +
+  geom_histogram(fill = "red", bins = 40)
+p2 <- taxi %>%
+  filter(dropoff_longitude > -74.05 & dropoff_longitude < -73.7) %>%
+  ggplot(aes(dropoff_longitude)) +
+  geom_histogram(fill = "blue", bins = 40)
+p3 <- taxi %>%
+  filter(pickup_latitude > 40.6 & pickup_latitude < 40.9) %>%
+  ggplot(aes(pickup_latitude)) +
+  geom_histogram(fill = "red", bins = 40)
+p4 <- taxi %>%
+  filter(dropoff_latitude > 40.6 & dropoff_latitude < 40.9) %>%
+  ggplot(aes(dropoff_latitude)) +
+  geom_histogram(fill = "blue", bins = 40)
+layout <- matrix(c(1,2,3,4),2,2,byrow=FALSE)
+muplot(p1, p2, p3, p4, layout=layout)
+p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1
+
+
+
