@@ -195,5 +195,34 @@ layout <- matrix(c(1,2,3,4),2,2,byrow=FALSE)
 muplot(p1, p2, p3, p4, layout=layout)
 p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1
 
+taxi %>%
+  arrange(pickup_latitude) %>%
+  select(pickup_latitude, pickup_longitude) %>%
+  head(5)
+taxi %>%
+  arrange(desc(pickup_latitude)) %>%
+  select(pickup_latitude, pickup_longitude) %>%
+  head(5)
+p1 <- taxi %>%
+  mutate(wday = wday(pickup_datetime, label = TRUE, week_start = 1)) %>%
+  group_by(wday, vendor_id) %>%
+  summarise(median_duration = median(trip_duration)/60) %>%
+  ggplot(aes(wday, median_duration, color = vendor_id)) +
+  geom_point(size = 4) +
+  labs(x = "Day of the week", y = "Median trip duration [min]")
+p2 <- taxi %>%
+  mutate(hpick = hour(pickup_datetime)) %>%
+  group_by(hpick, vendor_id) %>%
+  summarise(median_duration = median(trip_duration)/60) %>%
+  ggplot(aes(hpick, median_duration, color = vendor_id)) +
+  geom_smooth(method = "loess", span = 1/2) +
+  geom_point(size = 4) +
+  labs(x = "Hour of the day", y = "Median trip duration [min]") +
+  theme(legend.position = "none")
+layout <- matrix(c(1,2),2,1,byrow=FALSE)
+muplot(p1, p2, layout=layout)
+p1 <- 1; p2 <- 1
+
+
 
 
