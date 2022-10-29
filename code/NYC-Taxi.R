@@ -225,4 +225,21 @@ p1 <- 1; p2 <- 1
 
 
 
+train %>%
+  ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme(legend.position = "none") +
+  facet_wrap(~ vendor_id) +
+  labs(y = "Trip duration [s]", x = "Number of passengers")
+
+train %>%
+  ggplot(aes(trip_duration, fill = vendor_id)) +
+  geom_density(position = "stack") +
+  scale_x_log10()
+
+train %>%
+  group_by(vendor_id) %>%
+  summarise(mean_duration = mean(trip_duration),
+            median_duration = median(trip_duration))
 
