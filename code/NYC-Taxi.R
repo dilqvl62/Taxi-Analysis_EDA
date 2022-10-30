@@ -243,3 +243,17 @@ train %>%
   summarise(mean_duration = mean(trip_duration),
             median_duration = median(trip_duration))
 
+train %>%
+  group_by(vendor_id, store_and_fwd_flag) %>%
+  count()
+
+train %>%
+  filter(vendor_id == 1) %>%
+  ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  facet_wrap(~ store_and_fwd_flag) +
+  theme(legend.position = "none") +
+  labs(y = "Trip duration [s]", x = "Number of passengers") +
+  ggtitle("Store_and_fwd_flag impact")
+
