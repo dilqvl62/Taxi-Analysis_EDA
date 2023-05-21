@@ -17,65 +17,78 @@ library('geosphere')# spatial locations
 library('leaflet.extras')#maps
 library('maps') #maps
 
-muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
-  plots <- c(list(...), plotlist)
-  numPlots = length(plots)
-  if (is.null(layout)) {
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-                        ncol = cols, nrow = ceilling(numPlots/cols))
-  }
-  if(numPlots ==1) {
-    print(plots[[1]])
-  }
-  if (numPlots==1) {
-    print(plots[[1]])
-  }else {
-    grid.newpage()
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-    for (i in 1:numPlots) {
-      matchid <- as.data.frame(which(layout == i, arr.ind =TRUE))
-      print(plots[[i]], vp = viewport(layout.pos.row = matchid$row,
-                                      layout.pos.col = matchid$col))
-    }
-  }
-}
-taxi<- as_tibble(read.csv('data/Taxi.csv'))
-summary(taxi)
-glimpse(taxi)
-sum(is.na(taxi))
+# muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
+#   plots <- c(list(...), plotlist)
+#   numPlots = length(plots)
+#   if (is.null(layout)) {
+#     layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+#                         ncol = cols, nrow = ceilling(numPlots/cols))
+#   }
+#   if(numPlots ==1) {
+#     print(plots[[1]])
+#   }
+#   if (numPlots==1) {
+#     print(plots[[1]])
+#   }else {
+#     grid.newpage()
+#     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+#     for (i in 1:numPlots) {
+#       matchid <- as.data.frame(which(layout == i, arr.ind =TRUE))
+#       print(plots[[i]], vp = viewport(layout.pos.row = matchid$row,
+#                                       layout.pos.col = matchid$col))
+#     }
+#   }
+# }
 
-table(taxi$vendor_id)
-table(taxi$store_and_fwd_flag)
-table(taxi$passenger_count)
-qplot(trip_duration, data=taxi, bins = 30)
+Ny_taxi<- as_tibble(read.csv('data/Taxi.csv'))
+# Understading the variables 
+summary(Ny_taxi)
+glimpse(Ny_taxi)
+sum(is.na(Ny_taxi))
+table(Ny_taxi$vendor_id)
+table(Ny_taxi$store_and_fwd_flag)
+table(Ny_taxi$passenger_count)
 
-s1 = taxi %>%
+
+#taking a look at the trip duration variable 
+qplot(trip_duration, data=Ny_taxi, bins = 30)
+
+#minimizing the trip duration to have a better look of the graph 
+reduced_trips = Ny_taxi %>%
   filter(trip_duration < 10000)
-qplot(trip_duration, data=s1, bins =30)
+qplot(trip_duration, data=reduced_trips, bins =30)
 
-taxi%>%
+#again making the graph look more informative by using the log for x axis and sqrt for the y axsis
+Ny_taxi%>%
   ggplot(aes(trip_duration)) + 
   geom_histogram(fill ="red", bins= 150) +
   scale_x_log10()+
   scale_y_sqrt()
-
-taxi <- taxi %>%
+# Getting the locations of pickups coordinates by plotting the map of NYC using [leaflet] package 
+ 
+#converting some variables to factor and some to date time using the function mutate()
+Ny_taxi <- Ny_taxi %>%
   mutate(pickup_datetime= ymd_hms(pickup_datetime),
          dropoff_datetime= ymd_hms(dropoff_datetime),
          vendor_id= factor(vendor_id),
          passenger_count= factor(passenger_count))
 
-taxi %>%
+#
+Ny_taxi %>%
   mutate(check = abs(int_length(interval(dropoff_datetime,pickup_datetime)) + trip_duration) > 0) %>%
   select(check,pickup_datetime, dropoff_datetime, trip_duration) %>%
   group_by(check) %>%
   count()
-
+#setting the seed for a reproducible code 
 set.seed(1234)
-foo <- sample_n(taxi , 8e3)
-leaflet(data = foo) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
+
+#creatting a sample dataset from the original one 
+pickups_map <- sample_n(Ny_taxi , 8e3)
+leaflet(data = pickups_map) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
   addCircleMarkers(~ pickup_longitude, ~pickup_latitude, radius = 1,
                    color = "red", fillOpacity = 0.3)
+
+ggsave("../figures/NYC_pickups.png", plot = pickups_map, width = 6, height = 4, dpi = 300)
 
 
 taxi %>% 
