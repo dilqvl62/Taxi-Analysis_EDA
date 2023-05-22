@@ -83,43 +83,38 @@ Ny_taxi %>%
 set.seed(1234)
 
 #creatting a sample dataset from the original one 
-pickups_map <- sample_n(Ny_taxi , 8e3)
-leaflet(data = pickups_map) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
+Ny_taxi_sample <- sample_n(Ny_taxi , 8e3)
+
+#plotting the pickups using leaflets 
+leaflet(data = Ny_taxi_sample) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
   addCircleMarkers(~ pickup_longitude, ~pickup_latitude, radius = 1,
                    color = "red", fillOpacity = 0.3)
 
-ggsave("../figures/NYC_pickups.png", plot = pickups_map, width = 6, height = 4, dpi = 300)
-
-
-taxi %>% 
-  ggplot(aes(trip_duration)) +
-  geom_histogram(fill= "red", bins = 150) + 
-  scale_x_log10() + 
-  scale_y_sqrt()
-
-
-taxi %>%
+#taking a look at the data by arranging the trip duration in a descending order 
+Ny_taxi %>%
   arrange(desc(trip_duration)) %>%
   select(trip_duration, pickup_datetime,dropoff_datetime,everything()) %>%
   head(10)
-
-p1 <- taxi %>%
+# checking the unique values of the year for pickups and dropoffs 
+unique(year(Ny_taxi$pickup_datetime))
+unique(year(Ny_taxi$dropoff_datetime))
+# Plotting a histogram for the pickup_datetime
+pickup_dt <- Ny_taxi %>%
   ggplot(aes(pickup_datetime)) + 
   geom_histogram(fill = "red", bins =120) + 
   labs(x= "pickup dates")
 
-p2 <- taxi %>%
+# Plotting a histogram for the dropoff_datetime
+dropoff_dt <- Ny_taxi %>%
   ggplot(aes(dropoff_datetime)) + 
   geom_histogram(fill = "blue", bins = 120) + 
   labs(x= "dropoff dates")
-layout <- matrix(c(1,2),2,1,byrow = FALSE)
-muplot(p1,p2, layout=layout)
-p1 <-1; p2<-1
-
-taxi %>%
+#plotting histogram only for filtered dates to get a better insight 
+Ny_taxi %>%
   filter(pickup_datetime > ymd("2016-01-20") & pickup_datetime < ymd("2016-02-10")) %>%
   ggplot(aes(pickup_datetime)) + 
   geom_histogram(fill ="red", bins =120)
+
 
 p1<- taxi %>% 
   group_by(passenger_count) %>%
