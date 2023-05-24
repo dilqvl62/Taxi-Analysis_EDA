@@ -1,6 +1,7 @@
 library('ggplot2') # visualization
 library('scales') #visualization
 library('grid')# visualization
+library('gridExtra')
 library('RColorBrewer')# visualization
 library('corrplot') # visualization
 library('alluvial')# visualization
@@ -16,6 +17,7 @@ library('leaflet') #maps
 library('geosphere')# spatial locations
 library('leaflet.extras')#maps
 library('maps') #maps
+
 
 # muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
 #   plots <- c(list(...), plotlist)
@@ -40,7 +42,14 @@ library('maps') #maps
 #   }
 # }
 
+multiplot_function <- function(...) {
+  # Arrange the plots in a grid
+  library(gridExtra)
+  grid.arrange(..., nrow = 1)  # Arrange plots in a single row
+}
+
 Ny_taxi<- as_tibble(read.csv('data/Taxi.csv'))
+
 # Understading the variables 
 summary(Ny_taxi)
 glimpse(Ny_taxi)
@@ -54,9 +63,9 @@ table(Ny_taxi$passenger_count)
 qplot(trip_duration, data=Ny_taxi, bins = 30)
 
 #minimizing the trip duration to have a better look of the graph 
-reduced_trips = Ny_taxi %>%
+reduced_duration = Ny_taxi %>%
   filter(trip_duration < 10000)
-qplot(trip_duration, data=reduced_trips, bins =30)
+qplot(trip_duration, data=reduced_duration, bins =30)
 
 #again making the graph look more informative by using the log for x axis and sqrt for the y axsis
 Ny_taxi%>%
@@ -73,7 +82,7 @@ Ny_taxi <- Ny_taxi %>%
          vendor_id= factor(vendor_id),
          passenger_count= factor(passenger_count))
 
-#
+#creating new variable check and outputing the count of that variable
 Ny_taxi %>%
   mutate(check = abs(int_length(interval(dropoff_datetime,pickup_datetime)) + trip_duration) > 0) %>%
   select(check,pickup_datetime, dropoff_datetime, trip_duration) %>%
@@ -114,9 +123,10 @@ Ny_taxi %>%
   filter(pickup_datetime > ymd("2016-01-20") & pickup_datetime < ymd("2016-02-10")) %>%
   ggplot(aes(pickup_datetime)) + 
   geom_histogram(fill ="red", bins =120)
+#taking a look at the variation with the distributions of *passenger_count
+#and *vendor_id by creating different plots with different components:
 
-
-p1<- taxi %>% 
+passenger_count<- Ny_taxi %>% 
   group_by(passenger_count) %>%
   count() %>%
   ggplot(aes(passenger_count, n, fill = passenger_count)) +
@@ -124,18 +134,20 @@ p1<- taxi %>%
   scale_y_sqrt()+
   theme(legend.position = "none")
 
-p2<- taxi%>%
+
+vendorID<- Ny_taxi%>%
   ggplot(aes(vendor_id, fill= vendor_id)) +
   geom_bar()+
   theme(legend.position = "none")
 
-p3<-taxi %>%
+
+str_fwd_flag <- Ny_taxi %>%
   ggplot(aes(store_and_fwd_flag)) +
   geom_bar()+
   theme(legend.position = "none")+
   scale_y_log10()
 
-p4<- taxi %>%
+day_of_week<- Ny_taxi %>%
   mutate(wday = wday(pickup_datetime, label =TRUE,week_start = 1)) %>%
   group_by(wday,vendor_id) %>%
   count()%>%
@@ -144,7 +156,7 @@ p4<- taxi %>%
   labs(x = "Day of the week", y = "Total number of the pickups") + 
   theme(legend.position = "none")
 
-p5<- taxi %>%
+hours_pickup<- Ny_taxi %>%
   mutate(hpick = hour(pickup_datetime)) %>%
   group_by(hpick, vendor_id) %>%
   count() %>%
@@ -153,10 +165,7 @@ p5<- taxi %>%
   labs(x ="hour of the day", y = "Total number of pickups") +
   theme(legend.position = "none")
 
-layout <- matrix(c(1,2,3,4,5,5),3,2,byrow = TRUE)
-muplot(p1, p2, p3, p4, p5, layout=layout)
-p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1; p5 <- 1
-
+multiplot_function(passenger_count, vendorID, str_fwd_flag,day_of_week,hours_pickup)
 
 taxi%>%
   group_by(store_and_fwd_flag)%>%
