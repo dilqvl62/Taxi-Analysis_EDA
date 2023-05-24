@@ -18,34 +18,12 @@ library('geosphere')# spatial locations
 library('leaflet.extras')#maps
 library('maps') #maps
 
+#function to plot multiple plots and arranging them in two columns
 
-# muplot <- function(... ,plotlist=NULL, file, cols=1, layout=NULL){
-#   plots <- c(list(...), plotlist)
-#   numPlots = length(plots)
-#   if (is.null(layout)) {
-#     layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
-#                         ncol = cols, nrow = ceilling(numPlots/cols))
-#   }
-#   if(numPlots ==1) {
-#     print(plots[[1]])
-#   }
-#   if (numPlots==1) {
-#     print(plots[[1]])
-#   }else {
-#     grid.newpage()
-#     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-#     for (i in 1:numPlots) {
-#       matchid <- as.data.frame(which(layout == i, arr.ind =TRUE))
-#       print(plots[[i]], vp = viewport(layout.pos.row = matchid$row,
-#                                       layout.pos.col = matchid$col))
-#     }
-#   }
-# }
-
-multiplot_function <- function(...) {
+multiplot_function <- function(..., Col) {
   # Arrange the plots in a grid
   library(gridExtra)
-  grid.arrange(..., nrow = 1)  # Arrange plots in a single row
+  grid.arrange(..., ncol = Col)  # Arrange plots in columns
 }
 
 Ny_taxi<- as_tibble(read.csv('data/Taxi.csv'))
@@ -120,13 +98,13 @@ dropoff_dt <- Ny_taxi %>%
   labs(x= "dropoff dates")
 #plotting histogram only for filtered dates to get a better insight 
 Ny_taxi %>%
-  filter(pickup_datetime > ymd("2016-01-20") & pickup_datetime < ymd("2016-02-10")) %>%
+  filter((pickup_datetime > ymd("2016-01-20")) & (pickup_datetime < ymd("2016-02-10"))) %>%
   ggplot(aes(pickup_datetime)) + 
   geom_histogram(fill ="red", bins =120)
 #taking a look at the variation with the distributions of *passenger_count
 #and *vendor_id by creating different plots with different components:
 
-passenger_count<- Ny_taxi %>% 
+passengerCount<- Ny_taxi %>% 
   group_by(passenger_count) %>%
   count() %>%
   ggplot(aes(passenger_count, n, fill = passenger_count)) +
@@ -156,41 +134,48 @@ day_of_week<- Ny_taxi %>%
   labs(x = "Day of the week", y = "Total number of the pickups") + 
   theme(legend.position = "none")
 
-hours_pickup<- Ny_taxi %>%
-  mutate(hpick = hour(pickup_datetime)) %>%
-  group_by(hpick, vendor_id) %>%
-  count() %>%
-  ggplot(aes(hpick, n, color = vendor_id)) + 
-  geom_point(size = 4) + 
-  labs(x ="hour of the day", y = "Total number of pickups") +
-  theme(legend.position = "none")
+hours_pickup <- Ny_taxi %>%
+              mutate(hpick = hour(pickup_datetime)) %>%
+              group_by(hpick, vendor_id) %>%
+              count() %>%
+              ggplot(aes(hpick, n, color = vendor_id)) + 
+              geom_point(size = 4) + 
+              labs(x ="hour of the day", y = "Total number of pickups") +
+              theme(legend.position = "none")
 
-multiplot_function(passenger_count, vendorID, str_fwd_flag,day_of_week,hours_pickup)
+multiplot_function(passengerCount, vendorID, str_fwd_flag,day_of_week,hours_pickup,Col=2)
 
-taxi%>%
-  group_by(store_and_fwd_flag)%>%
-  count()
+#the count of passengers that are using taxi to travel
+Ny_taxi%>%
+            group_by(passenger_count)%>%
+            count()
 
-p1<-taxi%>%
-  mutate(hpick =hour(pickup_datetime),
-         Month = factor(month(pickup_datetime, label = TRUE))) %>%
-  group_by(hpick, Month)%>%
-  count()%>%
-  ggplot(aes(hpick, n, color= Month)) +
-  geom_line(size= 1.5) +
-  labs(x = "Hour of the day", y = "count") 
 
-p2<-taxi %>%
-  mutate(hpick= hour(pickup_datetime),
-         wday = factor(wday(pickup_datetime, label = TRUE, week_start = 1))) %>%
-  group_by(hpick, wday) %>%
-  count() %>%
-  ggplot(aes(hpick, n, color=wday)) + 
-  geom_line(size= 1.5) + 
-  labs(x = "Hour of the day", y = "count")
-layout <- matrix(c(1,2), 2,1, byrow= FALSE )
-muplot(p1, p2, layout = layout)
-p1<- 1; p2<- 1
+Ny_taxi%>%
+            group_by(store_and_fwd_flag)%>%
+            count() 
+# #plotting the hours of the day by using month as a color
+Month_hOfDay <-Ny_taxi%>%
+            mutate(hpick =hour(pickup_datetime),
+                   Month = factor(month(pickup_datetime, label = TRUE))) %>%
+            group_by(hpick, Month)%>%
+            count()%>%
+            ggplot(aes(hpick, n, color= Month)) +
+            geom_line(size= 1.5) +
+            labs(x = "Hour of the day", y = "count") 
+#plotting the hours of the day by using week as a color
+Week_hOfDay <-Ny_taxi %>%
+            mutate(hpick= hour(pickup_datetime),
+                   wday = factor(wday(pickup_datetime, label = TRUE, week_start = 1))) %>%
+            group_by(hpick, wday) %>%
+            count() %>%
+            ggplot(aes(hpick, n, color=wday)) + 
+            geom_line(size= 1.5) + 
+            labs(x = "Hour of the day", y = "count")
+
+#plotting the two plots in one plot using the multiplot function
+
+multiplot_function(Month_hOfDay, Week_hOfDay)
 
 p1 <- taxi %>%
   filter(pickup_longitude > -74.05 & pickup_longitude < -73.7) %>%
