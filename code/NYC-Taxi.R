@@ -42,30 +42,30 @@ qplot(trip_duration, data=Ny_taxi, bins = 30)
 
 #minimizing the trip duration to have a better look of the graph 
 reduced_duration = Ny_taxi %>%
-  filter(trip_duration < 10000)
-qplot(trip_duration, data=reduced_duration, bins =30)
+              filter(trip_duration < 10000)
+            qplot(trip_duration, data=reduced_duration, bins =30)
 
 #again making the graph look more informative by using the log for x axis and sqrt for the y axsis
 Ny_taxi%>%
-  ggplot(aes(trip_duration)) + 
-  geom_histogram(fill ="red", bins= 150) +
-  scale_x_log10()+
-  scale_y_sqrt()
+              ggplot(aes(trip_duration)) + 
+              geom_histogram(fill ="red", bins= 150) +
+              scale_x_log10()+
+              scale_y_sqrt()
 # Getting the locations of pickups coordinates by plotting the map of NYC using [leaflet] package 
  
 #converting some variables to factor and some to date time using the function mutate()
 Ny_taxi <- Ny_taxi %>%
-  mutate(pickup_datetime= ymd_hms(pickup_datetime),
-         dropoff_datetime= ymd_hms(dropoff_datetime),
-         vendor_id= factor(vendor_id),
-         passenger_count= factor(passenger_count))
+              mutate(pickup_datetime= ymd_hms(pickup_datetime),
+                     dropoff_datetime= ymd_hms(dropoff_datetime),
+                     vendor_id= factor(vendor_id),
+                     passenger_count= factor(passenger_count))
 
 #creating new variable check and outputing the count of that variable
 Ny_taxi %>%
-  mutate(check = abs(int_length(interval(dropoff_datetime,pickup_datetime)) + trip_duration) > 0) %>%
-  select(check,pickup_datetime, dropoff_datetime, trip_duration) %>%
-  group_by(check) %>%
-  count()
+              mutate(check = abs(int_length(interval(dropoff_datetime,pickup_datetime)) + trip_duration) > 0) %>%
+              select(check,pickup_datetime, dropoff_datetime, trip_duration) %>%
+              group_by(check) %>%
+              count()
 #setting the seed for a reproducible code 
 set.seed(1234)
 
@@ -74,65 +74,65 @@ Ny_taxi_sample <- sample_n(Ny_taxi , 8e3)
 
 #plotting the pickups using leaflets 
 leaflet(data = Ny_taxi_sample) %>% addProviderTiles("Esri.NatGeoWorldMap") %>%
-  addCircleMarkers(~ pickup_longitude, ~pickup_latitude, radius = 1,
-                   color = "red", fillOpacity = 0.3)
+              addCircleMarkers(~ pickup_longitude, ~pickup_latitude, radius = 1,
+                               color = "red", fillOpacity = 0.3)
 
 #taking a look at the data by arranging the trip duration in a descending order 
 Ny_taxi %>%
-  arrange(desc(trip_duration)) %>%
-  select(trip_duration, pickup_datetime,dropoff_datetime,everything()) %>%
-  head(10)
+              arrange(desc(trip_duration)) %>%
+              select(trip_duration, pickup_datetime,dropoff_datetime,everything()) %>%
+              head(10)
 # checking the unique values of the year for pickups and dropoffs 
 unique(year(Ny_taxi$pickup_datetime))
 unique(year(Ny_taxi$dropoff_datetime))
 # Plotting a histogram for the pickup_datetime
 pickup_dt <- Ny_taxi %>%
-  ggplot(aes(pickup_datetime)) + 
-  geom_histogram(fill = "red", bins =120) + 
-  labs(x= "pickup dates")
+              ggplot(aes(pickup_datetime)) + 
+              geom_histogram(fill = "red", bins =120) + 
+              labs(x= "pickup dates")
 
 # Plotting a histogram for the dropoff_datetime
 dropoff_dt <- Ny_taxi %>%
-  ggplot(aes(dropoff_datetime)) + 
-  geom_histogram(fill = "blue", bins = 120) + 
-  labs(x= "dropoff dates")
+              ggplot(aes(dropoff_datetime)) + 
+              geom_histogram(fill = "blue", bins = 120) + 
+              labs(x= "dropoff dates")
 #plotting histogram only for filtered dates to get a better insight 
 Ny_taxi %>%
-  filter((pickup_datetime > ymd("2016-01-20")) & (pickup_datetime < ymd("2016-02-10"))) %>%
-  ggplot(aes(pickup_datetime)) + 
-  geom_histogram(fill ="red", bins =120)
+              filter((pickup_datetime > ymd("2016-01-20")) & (pickup_datetime < ymd("2016-02-10"))) %>%
+              ggplot(aes(pickup_datetime)) + 
+              geom_histogram(fill ="red", bins =120)
 #taking a look at the variation with the distributions of *passenger_count
 #and *vendor_id by creating different plots with different components:
 
 passengerCount<- Ny_taxi %>% 
-  group_by(passenger_count) %>%
-  count() %>%
-  ggplot(aes(passenger_count, n, fill = passenger_count)) +
-  geom_col() + 
-  scale_y_sqrt()+
-  theme(legend.position = "none")
+              group_by(passenger_count) %>%
+              count() %>%
+              ggplot(aes(passenger_count, n, fill = passenger_count)) +
+              geom_col() + 
+              scale_y_sqrt()+
+              theme(legend.position = "none")
 
 
 vendorID<- Ny_taxi%>%
-  ggplot(aes(vendor_id, fill= vendor_id)) +
-  geom_bar()+
-  theme(legend.position = "none")
+              ggplot(aes(vendor_id, fill= vendor_id)) +
+              geom_bar()+
+              theme(legend.position = "none")
 
 
 str_fwd_flag <- Ny_taxi %>%
-  ggplot(aes(store_and_fwd_flag)) +
-  geom_bar()+
-  theme(legend.position = "none")+
-  scale_y_log10()
+              ggplot(aes(store_and_fwd_flag)) +
+              geom_bar()+
+              theme(legend.position = "none")+
+              scale_y_log10()
 
 day_of_week<- Ny_taxi %>%
-  mutate(wday = wday(pickup_datetime, label =TRUE,week_start = 1)) %>%
-  group_by(wday,vendor_id) %>%
-  count()%>%
-  ggplot(aes(wday,n, colour = vendor_id)) +
-  geom_point(size =4) +
-  labs(x = "Day of the week", y = "Total number of the pickups") + 
-  theme(legend.position = "none")
+              mutate(wday = wday(pickup_datetime, label =TRUE,week_start = 1)) %>%
+              group_by(wday,vendor_id) %>%
+              count()%>%
+              ggplot(aes(wday,n, colour = vendor_id)) +
+              geom_point(size =4) +
+              labs(x = "Day of the week", y = "Total number of the pickups") + 
+              theme(legend.position = "none")
 
 hours_pickup <- Ny_taxi %>%
               mutate(hpick = hour(pickup_datetime)) %>%
@@ -147,8 +147,8 @@ multiplot_function(passengerCount, vendorID, str_fwd_flag,day_of_week,hours_pick
 
 #the count of passengers that are using taxi to travel
 Ny_taxi%>%
-            group_by(passenger_count)%>%
-            count()
+              group_by(passenger_count)%>%
+              count()
 
 
 Ny_taxi%>%
@@ -173,11 +173,13 @@ Week_hOfDay <-Ny_taxi %>%
             geom_line(size= 1.5) + 
             labs(x = "Hour of the day", y = "count")
 
+
 #plotting the two plots in one plot using the multiplot function
 
-multiplot_function(Month_hOfDay, Week_hOfDay)
+multiplot_function(Month_hOfDay, Week_hOfDay, Col = 1)
 
-p1 <- taxi %>%
+#plotting based on latitude and longitude
+pLatitude <- Ny_taxi %>%
   filter(pickup_longitude > -74.05 & pickup_longitude < -73.7) %>%
   ggplot(aes(pickup_longitude)) +
   geom_histogram(fill = "red", bins = 40)
