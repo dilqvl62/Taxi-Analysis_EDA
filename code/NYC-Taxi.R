@@ -277,10 +277,10 @@ laguardia_coord <- tibble(lon = -73.872611, lat = 40.77725)
 
 #pickup coordinates
 pick_coord <- Ny_taxi %>%
-  select(pickup_longitude, pickup_latitude)
+          select(pickup_longitude, pickup_latitude)
 # dropoff coordinates
 drop_coord <- Ny_taxi %>%
-  select(dropoff_longitude, dropoff_latitude)
+          select(dropoff_longitude, dropoff_latitude)
 #creating new variables 
 Ny_taxi$dist <- distCosine(pick_coord, drop_coord)
 Ny_taxi$bearing = bearing(pick_coord, drop_coord)
@@ -300,61 +300,61 @@ Ny_taxi <- Ny_taxi %>%
            lg_trip = (lg_dist_pick < 2e3) | (lg_dist_drop < 2e3),
            blizzard = !( (date < ymd("2016-01-22") | (date > ymd("2016-01-29"))) )
   )
+print(colnames(Ny_taxi))
 
 #'compute the average apparent velocity of the taxis, the average duration 
 #'per day and hour, the average speed for these time bins
 
 
 set.seed(4321)
-taxi %>%
-  sample_n(5e4) %>%
-  ggplot(aes(dist, trip_duration)) +
-  geom_point() +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(x = "Direct distance [m]", y = "Trip duration [s]")
+Ny_taxi %>%
+          sample_n(5e4) %>%
+          ggplot(aes(dist, trip_duration)) +
+          geom_point() +
+          scale_x_log10() +
+          scale_y_log10() +
+          labs(x = "Direct distance [m]", y = "Trip duration [s]")
 
-taxi %>%
-  filter(trip_duration < 3600 & trip_duration > 120) %>%
-  filter(dist > 100 & dist < 100e3) %>%
-  ggplot(aes(dist, trip_duration)) +
-  geom_bin2d(bins = c(500,500)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  labs(x = "Direct distance [m]", y = "Trip duration [s]")
+Ny_taxi %>%
+          filter(trip_duration < 3600 & trip_duration > 120) %>%
+          filter(dist > 100 & dist < 100e3) %>%
+          ggplot(aes(dist, trip_duration)) +
+          geom_bin2d(bins = c(500,500)) +
+          scale_x_log10() +
+          scale_y_log10() +
+          labs(x = "Direct distance [m]", y = "Trip duration [s]")
 
-taxi %>%
-  filter(speed > 2 & speed < 1e2) %>%
-  ggplot(aes(speed)) +
-  geom_histogram(fill = "red", bins = 50) +
-  labs(x = "Average speed [km/h] (direct distance)")
+Ny_taxi %>%
+          filter(speed > 2 & speed < 1e2) %>%
+          ggplot(aes(speed)) +
+          geom_histogram(fill = "red", bins = 50) +
+          labs(x = "Average speed [km/h] (direct distance)")
 
-p1 <- taxi %>%
-  group_by(wday, vendor_id) %>%
-  summarise(median_speed = median(speed)) %>%
-  ggplot(aes(wday, median_speed, color = vendor_id)) +
-  geom_point(size = 4) +
-  labs(x = "Day of the week", y = "Median speed [km/h]")
 
-p2 <- taxi %>%
-  group_by(hour, vendor_id) %>%
-  summarise(median_speed = median(speed)) %>%
-  ggplot(aes(hour, median_speed, color = vendor_id)) +
-  geom_smooth(method = "loess", span = 1/2) +
-  geom_point(size = 4) +
-  labs(x = "Hour of the day", y = "Median speed [km/h]") +
-  theme(legend.position = "none")
+Wday_median_speed <- Ny_taxi %>%
+          group_by(wday, vendor_id) %>%
+          summarise(median_speed = median(speed)) %>%
+          ggplot(aes(wday, median_speed, color = vendor_id)) +
+          geom_point(size = 4) +
+          labs(x = "Day of the week", y = "Median speed [km/h]")
+
+Hour_d_median_speed <- Ny_taxi %>%
+          group_by(hour, vendor_id) %>%
+          summarise(median_speed = median(speed)) %>%
+          ggplot(aes(hour, median_speed, color = vendor_id)) +
+          geom_smooth(method = "loess", span = 1/2) +
+          geom_point(size = 4) +
+          labs(x = "Hour of the day", y = "Median speed [km/h]") +
+          theme(legend.position = "none")
 
 #'Create heatmap of speed over the week for hours.
 
-p3 <- taxi %>%
-  group_by(wday, hour) %>%
-  summarise(median_speed = median(speed)) %>%
-  ggplot(aes(hour, wday, fill = median_speed)) +
-  geom_tile() +
-  labs(x = "Hour of the day", y = "Day of the week") +
-  scale_fill_distiller(palette = "Spectral")
-layout <- matrix(c(1,2,3,3),2,2,byrow=TRUE)
-muplot(p1, p2, p3, layout=layout)
-p1 <- 1; p2 <- 1; p3 <- 1
+ Hour_Week_medianSpeed<- Ny_taxi %>%
+          group_by(wday, hour) %>%
+          summarise(median_speed = median(speed)) %>%
+          ggplot(aes(hour, wday, fill = median_speed)) +
+          geom_tile() +
+          labs(x = "Hour of the day", y = "Day of the week") +
+          scale_fill_distiller(palette = "Spectral")
 
+multiplot_function(Wday_median_speed,Hour_d_median_speed,Hour_Week_medianSpeed,Col =2)
