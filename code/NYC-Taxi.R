@@ -357,4 +357,6 @@ Hour_d_median_speed <- Ny_taxi %>%
           labs(x = "Hour of the day", y = "Day of the week") +
           scale_fill_distiller(palette = "Spectral")
 
-multiplot_function(Wday_median_speed,Hour_d_median_speed,Hour_Week_medianSpeed,Col =2)
+multiplot_function(Wday_median_speed,Hour_d_median_speed,Hour_Week_medianSpeed,Col = 2)
+
+
