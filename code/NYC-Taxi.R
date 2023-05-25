@@ -359,4 +359,43 @@ Hour_d_median_speed <- Ny_taxi %>%
 
 multiplot_function(Wday_median_speed,Hour_d_median_speed,Hour_Week_medianSpeed,Col = 2)
 
-
+# Bearing direction
+# If the distance is the magnitude of the trip vector 
+# then the bearing is its initial direction 
+# Estimate through the geosphere package
+#it tells us wheather the trip started out in the 
+#direction of North-West or South-East . We visualise the braring 
+#distribution and its relation to trip duration, distance and speed 
+Bearing <- Ny_taxi %>%
+          filter(dist < 1e5) %>%
+          ggplot(aes(bearing)) +
+          geom_histogram(fill = 'red', bins = 75) +
+          scale_x_continuous(breaks = seq(-180, 180, by= 45)) +
+          labs(x = "Bearing")
+Bearing_dist <- Ny_taxi %>%
+          filter(dist < 1e5) %>%
+          ggplot(aes(bearing, dist)) +
+          geom_bin2d(bins= c(100,100)) +
+          scale_y_log10()+
+          theme(legend.position = 'none')+
+          coord_polar() +
+          scale_x_continuous(breaks = seq(-180, 180, by =45 ))
+Bearing_trip_duration <- Ny_taxi %>%
+          filter(trip_duration < 3600 *22) %>%
+          filter(dist <1e5) %>%
+          ggplot(aes(bearing, trip_duration))+
+          geom_bin2d(bins = c(100,100)) +
+          scale_y_log10() +
+          labs(x= 'Bearing', y= 'Trip duration') +
+          coord_polar() +
+          scale_x_continuous(breaks = seq(-180, 180, by = 45))
+Bearing_Speed <- Ny_taxi %>%
+          filter(speed < 75 & dist < 1e5) %>%
+          ggplot(aes(bearing, speed)) +
+          geom_bin2d(bins = c(100,100)) +
+          scale_y_log10() +
+          labs(x= 'Bearing', y= 'Speed') +
+          coord_polar() +
+          scale_x_continuous(breaks = seq(-180, 180, by = 45))
+#plotting all of the four plots in One plot using multiplot function
+multiplot_function(Bearing,Bearing_dist,Bearing_trip_duration,Bearing_Speed, Col = 2)
