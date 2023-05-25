@@ -198,35 +198,36 @@ dLatitude<- Ny_taxi %>%
 #putting all the 4 plots into one 
 multiplot_function(pLongitude,dLongitude,pLatitude,dLatitude,Col =2)
 
-taxi %>%
-  arrange(pickup_latitude) %>%
-  select(pickup_latitude, pickup_longitude) %>%
-  head(5)
-taxi %>%
-  arrange(desc(pickup_latitude)) %>%
-  select(pickup_latitude, pickup_longitude) %>%
-  head(5)
-p1 <- taxi %>%
-  mutate(wday = wday(pickup_datetime, label = TRUE, week_start = 1)) %>%
-  group_by(wday, vendor_id) %>%
-  summarise(median_duration = median(trip_duration)/60) %>%
-  ggplot(aes(wday, median_duration, color = vendor_id)) +
-  geom_point(size = 4) +
-  labs(x = "Day of the week", y = "Median trip duration [min]")
-p2 <- taxi %>%
-  mutate(hpick = hour(pickup_datetime)) %>%
-  group_by(hpick, vendor_id) %>%
-  summarise(median_duration = median(trip_duration)/60) %>%
-  ggplot(aes(hpick, median_duration, color = vendor_id)) +
-  geom_smooth(method = "loess", span = 1/2) +
-  geom_point(size = 4) +
-  labs(x = "Hour of the day", y = "Median trip duration [min]") +
-  theme(legend.position = "none")
-layout <- matrix(c(1,2),2,1,byrow=FALSE)
-muplot(p1, p2, layout=layout)
-p1 <- 1; p2 <- 1
+#pickup_latitude vs pickup_longitude
+Ny_taxi %>%
+            arrange(pickup_latitude) %>%
+            select(pickup_latitude, pickup_longitude) %>%
+            head(5)
+Ny_taxi %>%
+            arrange(desc(pickup_latitude)) %>%
+            select(pickup_latitude, pickup_longitude) %>%
+            head(5)
+#plotting the week days vs median trip duration 
+WeedD_median_TD<- Ny_taxi %>%
+            mutate(wday = wday(pickup_datetime, label = TRUE, week_start = 1)) %>%
+            group_by(wday, vendor_id) %>%
+            summarise(median_duration = median(trip_duration)/60) %>%
+            ggplot(aes(wday, median_duration, color = vendor_id)) +
+            geom_point(size = 4) +
+            labs(x = "Day of the week", y = "Median trip duration [min]")
+#plotting 
+HourPu_median_TD<- Ny_taxi %>%
+            mutate(hpick = hour(pickup_datetime)) %>%
+            group_by(hpick, vendor_id) %>%
+            summarise(median_duration = median(trip_duration)/60) %>%
+            ggplot(aes(hpick, median_duration, color = vendor_id)) +
+            geom_smooth(method = "loess", span = 1/2) +
+            geom_point(size = 4) +
+            labs(x = "Hour of the day", y = "Median trip duration [min]") +
+            theme(legend.position = "none")
+#putting the two plots into one using the multiplot function
 
-
+multiplot_function(WeedD_median_TD, HourPu_median_TD, Col = 1)
 
 taxi %>%
   ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
