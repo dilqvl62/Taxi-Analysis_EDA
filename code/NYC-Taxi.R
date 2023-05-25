@@ -252,8 +252,9 @@ Ny_taxi %>%
 Ny_taxi %>%
             group_by(vendor_id, store_and_fwd_flag) %>%
             count()
-#
-Ny_taxi %>%
+# plotting the number of passengers or only vendor one 
+tripD_vendor1<- Ny_taxi %>%
+  
             filter(vendor_id == 1) %>%
             ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
             geom_boxplot() +
@@ -270,32 +271,34 @@ Ny_taxi %>%
 #'compare it to our *trip/_durations*, using the *distCosine* function of the [geosphere].
 
 
-
+#creatting the cordinates for jfk and laguardia aeroport
 jfk_coord <- tibble(lon = -73.778889, lat = 40.639722)
-la_guardia_coord <- tibble(lon = -73.872611, lat = 40.77725)
+laguardia_coord <- tibble(lon = -73.872611, lat = 40.77725)
 
-pick_coord <- taxi %>%
+#pickup coordinates
+pick_coord <- Ny_taxi %>%
   select(pickup_longitude, pickup_latitude)
-
-drop_coord <- taxi %>%
+# dropoff coordinates
+drop_coord <- Ny_taxi %>%
   select(dropoff_longitude, dropoff_latitude)
-taxi$dist <- distCosine(pick_coord, drop_coord)
-taxi$bearing = bearing(pick_coord, drop_coord)
-taxi$jfk_dist_pick <- distCosine(pick_coord, jfk_coord)
-taxi$jfk_dist_drop <- distCosine(drop_coord, jfk_coord)
-taxi$lg_dist_pick <- distCosine(pick_coord, la_guardia_coord)
-taxi$lg_dist_drop <- distCosine(drop_coord, la_guardia_coord)
-
-taxi <- taxi %>%
-  mutate(speed = dist/trip_duration*3.6,
-         date = date(pickup_datetime),
-         month = month(pickup_datetime, label = TRUE),
-         wday = wday(pickup_datetime, label = TRUE, week_start = 1),
-         hour = hour(pickup_datetime),
-         work = (hour %in% seq(8,18)) & (wday %in% c("Mon","Tues","Wed","Thurs","Fri")),
-         jfk_trip = (jfk_dist_pick < 2e3) | (jfk_dist_drop < 2e3),
-         lg_trip = (lg_dist_pick < 2e3) | (lg_dist_drop < 2e3),
-         blizzard = !( (date < ymd("2016-01-22") | (date > ymd("2016-01-29"))) )
+#creating new variables 
+Ny_taxi$dist <- distCosine(pick_coord, drop_coord)
+Ny_taxi$bearing = bearing(pick_coord, drop_coord)
+Ny_taxi$jfk_dist_pick <- distCosine(pick_coord, jfk_coord)
+Ny_taxi$jfk_dist_drop <- distCosine(drop_coord, jfk_coord)
+Ny_taxi$lg_dist_pick <- distCosine(pick_coord, laguardia_coord)
+Ny_taxi$lg_dist_drop <- distCosine(drop_coord, laguardia_coord)
+#creating new data set using the new variables that was created 
+Ny_taxi <- Ny_taxi %>%
+           mutate(speed = dist/trip_duration*3.6,
+           date = date(pickup_datetime),
+           month = month(pickup_datetime, label = TRUE),
+           wday = wday(pickup_datetime, label = TRUE, week_start = 1),
+           hour = hour(pickup_datetime),
+           work = (hour %in% seq(8,18)) & (wday %in% c("Mon","Tues","Wed","Thurs","Fri")),
+           jfk_trip = (jfk_dist_pick < 2e3) | (jfk_dist_drop < 2e3),
+           lg_trip = (lg_dist_pick < 2e3) | (lg_dist_drop < 2e3),
+           blizzard = !( (date < ymd("2016-01-22") | (date > ymd("2016-01-29"))) )
   )
 
 #'compute the average apparent velocity of the taxis, the average duration 
