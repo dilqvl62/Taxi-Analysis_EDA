@@ -179,25 +179,24 @@ Week_hOfDay <-Ny_taxi %>%
 multiplot_function(Month_hOfDay, Week_hOfDay, Col = 1)
 
 #plotting based on latitude and longitude
+pLongitude <- Ny_taxi %>%
+            filter(pickup_longitude > -74.05 & pickup_longitude < -73.7) %>%
+            ggplot(aes(pickup_longitude)) +
+            geom_histogram(fill = "red", bins = 40)
+dLongitude <- Ny_taxi %>%
+            filter(dropoff_longitude > -74.05 & dropoff_longitude < -73.7) %>%
+            ggplot(aes(dropoff_longitude)) +
+            geom_histogram(fill = "blue", bins = 40)
 pLatitude <- Ny_taxi %>%
-  filter(pickup_longitude > -74.05 & pickup_longitude < -73.7) %>%
-  ggplot(aes(pickup_longitude)) +
-  geom_histogram(fill = "red", bins = 40)
-p2 <- taxi %>%
-  filter(dropoff_longitude > -74.05 & dropoff_longitude < -73.7) %>%
-  ggplot(aes(dropoff_longitude)) +
-  geom_histogram(fill = "blue", bins = 40)
-p3 <- taxi %>%
-  filter(pickup_latitude > 40.6 & pickup_latitude < 40.9) %>%
-  ggplot(aes(pickup_latitude)) +
-  geom_histogram(fill = "red", bins = 40)
-p4 <- taxi %>%
-  filter(dropoff_latitude > 40.6 & dropoff_latitude < 40.9) %>%
-  ggplot(aes(dropoff_latitude)) +
-  geom_histogram(fill = "blue", bins = 40)
-layout <- matrix(c(1,2,3,4),2,2,byrow=FALSE)
-muplot(p1, p2, p3, p4, layout=layout)
-p1 <- 1; p2 <- 1; p3 <- 1; p4 <- 1
+            filter(pickup_latitude > 40.6 & pickup_latitude < 40.9) %>%
+            ggplot(aes(pickup_latitude)) +
+            geom_histogram(fill = "red", bins = 40)
+dLatitude<- Ny_taxi %>%
+            filter(dropoff_latitude > 40.6 & dropoff_latitude < 40.9) %>%
+            ggplot(aes(dropoff_latitude)) +
+            geom_histogram(fill = "blue", bins = 40)
+#putting all the 4 plots into one 
+multiplot_function(pLongitude,dLongitude,pLatitude,dLatitude,Col =2)
 
 taxi %>%
   arrange(pickup_latitude) %>%
