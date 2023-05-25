@@ -229,37 +229,39 @@ HourPu_median_TD<- Ny_taxi %>%
 
 multiplot_function(WeedD_median_TD, HourPu_median_TD, Col = 1)
 
-taxi %>%
-  ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
-  geom_boxplot() +
-  scale_y_log10() +
-  theme(legend.position = "none") +
-  facet_wrap(~ vendor_id) +
-  labs(y = "Trip duration [s]", x = "Number of passengers")
+#checking the correlation between different vendors and the duration of the trip  
+Ny_taxi %>%
+            ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
+            geom_boxplot() +
+            scale_y_log10() +
+            theme(legend.position = "none") +
+            facet_wrap(~ vendor_id) +
+            labs(y = "Trip duration [s]", x = "Number of passengers")
 
-taxi %>%
-  ggplot(aes(trip_duration, fill = vendor_id)) +
-  geom_density(position = "stack") +
-  scale_x_log10()
+Ny_taxi %>%
+            ggplot(aes(trip_duration, fill = vendor_id)) +
+            geom_density(position = "stack") +
+            scale_x_log10()
 
-taxi %>%
-  group_by(vendor_id) %>%
-  summarise(mean_duration = mean(trip_duration),
-            median_duration = median(trip_duration))
+Ny_taxi %>%
+            group_by(vendor_id) %>%
+            summarise(mean_duration = mean(trip_duration),
+                      median_duration = median(trip_duration))
+#store and Forward vs *trip duration
 
-taxi %>%
-  group_by(vendor_id, store_and_fwd_flag) %>%
-  count()
-
-taxi %>%
-  filter(vendor_id == 1) %>%
-  ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
-  geom_boxplot() +
-  scale_y_log10() +
-  facet_wrap(~ store_and_fwd_flag) +
-  theme(legend.position = "none") +
-  labs(y = "Trip duration [s]", x = "Number of passengers") +
-  ggtitle("Store_and_fwd_flag impact")
+Ny_taxi %>%
+            group_by(vendor_id, store_and_fwd_flag) %>%
+            count()
+#
+Ny_taxi %>%
+            filter(vendor_id == 1) %>%
+            ggplot(aes(passenger_count, trip_duration, color = passenger_count)) +
+            geom_boxplot() +
+            scale_y_log10() +
+            facet_wrap(~ store_and_fwd_flag) +
+            theme(legend.position = "none") +
+            labs(y = "Trip duration [s]", x = "Number of passengers") +
+            ggtitle("Store_and_fwd_flag impact")
 
 #'build new features from the existing ones - (date, month, wday, hour) 
 #'derived from the *pickup/_datetime*. 
