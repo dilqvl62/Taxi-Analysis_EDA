@@ -24,7 +24,8 @@ I created a function to vusualize and compare multiple plots side by side
 ![Screen Shot 2023-10-26 at 3 43 05 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/07842c5b-1032-46eb-b1eb-f0dce54903e0)
 ![Screen Shot 2023-10-26 at 3 48 57 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/d1a526e2-c7be-4754-8077-6d1b0ae96d3f)
 
-* Creating a mutiplot with different components to investigate the variation and the distribution of passenger count and vendor_id 
+* Creating a mutiplot with different components to investigate the variation and the distribution of passenger count and vendor_id and other created variables
+
 ![Screen Shot 2023-10-26 at 4 21 13 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/9dbedc2c-2930-486e-942b-f9f5dca426e4)
 
 * Build a new features from the existing one [date, month, wday, hour] derived from the pickup_datetime. From the coordinated of the pickup and dropoff points, 
