@@ -34,10 +34,15 @@ calculate the distace between the two pointsand compare it to trip_duration usin
 
 ![Screen Shot 2023-10-26 at 4 40 43 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/cf972efd-c18d-4457-84a0-060d7dc8cd68)
 
-* Create a new feature based on busy hours
+* Bearing direction
+  * If the direct **distance** is the magnitude of the trip vector then the **bearing** is its initial direction
+  * Use the **geosphere** package that tells me whether the trips started out for instance in the direction of North-West or South-East
+  * I visualize the **bearing** distribution and its relation to **trip_duration**, direct **distance** and **speed**
+
+ ![Screen Shot 2023-10-26 at 4 51 32 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/b99a11af-0319-420f-a328-992ac5d53014)
 
 
 
 
 
-* See the [visualization created for this project](figures)
+**Note** See the [visualization created for this project](figures)
