@@ -18,9 +18,11 @@ I created a function to vusualize and compare multiple plots side by side
   
 * [Plot a map of NYC along with number of pickup coordinates to get a get a general overview of the locations and distances using leaflet](https://github.com/dilqvl62/Taxi-Analysis_EDA/blob/main/figures/pickups_map.png)
 
-* Plotting a histogram for the dropoff_datetime
+* Plotting a histogram for the pickup datetime and dropoff datetime from Janrury to July respectively
 
 ![Screen Shot 2023-10-26 at 3 43 05 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/07842c5b-1032-46eb-b1eb-f0dce54903e0)
+![Screen Shot 2023-10-26 at 3 48 57 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/d1a526e2-c7be-4754-8077-6d1b0ae96d3f)
+
 
 * Check how many number of passenger s travel in a taxi
 * Check weather different number of passengers are correlated with the duration of the trip
