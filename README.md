@@ -6,11 +6,11 @@ The purpose of this project is to perform the Exploratory Data Analysis on the N
 I get the data from [this webesite](https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data) 
 
 ## Objectives
-** For this project, I used the R language and these are the tools (libraries) that I used:
+**For this project, I used the R language and these are the tools (libraries) that I used**:
 
 ![Screen Shot 2023-09-27 at 1 38 48 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/8efc502f-fd72-434e-9e14-d86bc17302e7)
 
-* The following are the steps I took to explore and understand the data 
+*The following are the steps I took to explore and understand the data* 
 
 I created a function to vusualize and compare multiple plots side by side
 
