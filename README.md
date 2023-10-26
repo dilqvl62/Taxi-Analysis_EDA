@@ -30,10 +30,12 @@ I created a function to vusualize and compare multiple plots side by side
 
 * Build a new features from the existing one [date, month, wday, hour] derived from the pickup_datetime. From the coordinated of the pickup and dropoff points, 
 calculate the distace between the two pointsand compare it to trip_duration using the function distCosine of the geosphere
-* Compute the average apparent velocity of the taxis, the average duration per day and hour, the average speed of these time bins
 * Create a heatmap of speed over the week for hours
+
+![Screen Shot 2023-10-26 at 4 40 43 PM](https://github.com/dilqvl62/Taxi-Analysis_EDA/assets/107519883/cf972efd-c18d-4457-84a0-060d7dc8cd68)
+
 * Create a new feature based on busy hours
-* Explore the trips to airport, long day trips, and zero distance trips
+
 
 
 
